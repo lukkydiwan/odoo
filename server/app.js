@@ -22,11 +22,11 @@ import { notFound, errorHandler } from './middlewares/errorHandler.js';
 import connectDB from './config/db.js';
 
 // Socket logic
-// import setupNotificationSocket from './sockets/notificationSocket.js';
+import { setupNotificationSocket, onlineUsers } from './sockets/notificationSocket.js';
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
+const io = new SocketIOServer(server, {
   cors: {
     origin: "*",
     credentials: true,
@@ -37,10 +37,12 @@ const io = new Server(server, {
 connectDB();
 
 // // Socket.IO Setup
-// setupNotificationSocket(io);
+setupNotificationSocket(io);
+app.set('io', io);
+app.set('onlineUsers', onlineUsers);
 
 // Middleware
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
