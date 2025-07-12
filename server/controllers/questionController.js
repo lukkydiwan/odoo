@@ -71,7 +71,11 @@ export const downvoteQuestion = async (req, res) => {
 
 // @desc    Delete a question (author or admin only)
 export const deleteQuestion = async (req, res) => {
-  const question = await Question.findById(req.params.id);
+  const question = await Question.findById(req.params.id) .populate("author", "username")
+  .populate({
+    path: "answers",
+    populate: { path: "author", select: "username" }
+  });
   if (!question) return res.status(404).json({ message: 'Question not found' });
 
   if (
